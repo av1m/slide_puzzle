@@ -180,6 +180,7 @@ abstract class Puzzle {
   }
 
   Puzzle clickValue(int tileValue) {
+    print('Can we move $tileValue →  ${_movable(tileValue)}');
     if (!_movable(tileValue)) {
       return null;
     }
@@ -189,6 +190,7 @@ abstract class Puzzle {
   Puzzle _clickValue(int tileValue) {
     assert(_movable(tileValue));
     final target = coordinatesOf(tileValue);
+    print(target);
 
     final newStore = _copyData();
 
@@ -236,6 +238,13 @@ abstract class Puzzle {
 
   @override
   String toString() => _toString();
+
+  List<List<String>> getList() {
+    return List<List<String>>.generate(
+        height,
+        (row) => List<String>.generate(
+            width, (col) => valueAt(col, row).toString()));
+  }
 
   String _toString() {
     final grid = List<List<String>>.generate(

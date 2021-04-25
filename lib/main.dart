@@ -1,7 +1,3 @@
-// Copyright 2020, the Flutter project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'src/core/puzzle_animator.dart';
 import 'src/flutter.dart';
 import 'src/puzzle_home_state.dart';
@@ -11,9 +7,9 @@ void main() => runApp(PuzzleApp());
 class PuzzleApp extends StatelessWidget {
   final int rows, columns;
 
-  PuzzleApp({int columns = 4, int rows = 4})
-      : columns = columns ?? 4,
-        rows = rows ?? 4;
+  PuzzleApp({int columns = 3, int rows = 3})
+      : columns = columns ?? 3,
+        rows = rows ?? 3;
 
   @override
   Widget build(BuildContext context) => MaterialApp(

@@ -11,7 +11,5 @@ abstract class PuzzleControls implements Listenable {
 
   int get incorrectTiles;
 
-  bool get autoPlay;
-
-  void Function(bool newValue) get setAutoPlayFunction;
+  void solve();
 }

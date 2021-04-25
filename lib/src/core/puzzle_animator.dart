@@ -19,6 +19,10 @@ class PuzzleAnimator implements PuzzleProxy {
 
   bool _stable;
 
+  Puzzle get puzzle => _puzzle;
+  
+  List<Body> get locations => _locations;
+
   bool get stable => _stable;
 
   @override
@@ -61,15 +65,9 @@ class PuzzleAnimator implements PuzzleProxy {
               (_puzzle.width - 1.0) / 2, (_puzzle.height - 1.0) / 2, 0, 0);
         });
 
-  void playRandom() {
-    if (_puzzle.fitness == 0) {
-      return;
-    }
-
-    _puzzle = _puzzle.clickRandom(vertical: _nextRandomVertical);
-    _nextRandomVertical = !_nextRandomVertical;
-    _clickCount++;
-    _controller.add(PuzzleEvent.random);
+  void makeMove(int move) {
+    print('We need to move the tile $move');
+    clickOrShake(move);
   }
 
   @override

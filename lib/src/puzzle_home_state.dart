@@ -3,9 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:provider/provider.dart';
 
+import 'api/solve.dart';
 import 'app_state.dart';
 import 'core/puzzle_animator.dart';
 import 'core/puzzle_proxy.dart';
@@ -21,18 +23,7 @@ class _PuzzleControls extends ChangeNotifier implements PuzzleControls {
 
   _PuzzleControls(this._parent);
 
-  @override
-  bool get autoPlay => _parent._autoPlay;
-
   void _notify() => notifyListeners();
-
-  @override
-  void Function(bool newValue) get setAutoPlayFunction {
-    if (_parent.puzzle.solved) {
-      return null;
-    }
-    return _parent._setAutoPlay;
-  }
 
   @override
   int get clickCount => _parent.puzzle.clickCount;
@@ -42,6 +33,26 @@ class _PuzzleControls extends ChangeNotifier implements PuzzleControls {
 
   @override
   void reset() => _parent.puzzle.reset();
+
+  @override
+  void solve() async {
+    print('Starting resolving...');
+    final tiles = _parent.puzzle.puzzle.getList();
+    final moves = await API.solve(tiles);
+    for (var move in moves) {
+      _parent.puzzle.makeMove(move - 1);
+      await Future.delayed(const Duration(milliseconds: 500), () {});
+    }
+
+    /*try {
+      data.then((value) => value.forEach((e) => {
+            _parent.puzzle.makeMove(e - 1),
+            await Future.delayed(const Duration(seconds: 2), (){}),
+          }));
+    } on Exception catch (e) {
+      print(e);
+    }*/
+  }
 }
 
 class PuzzleHomeState extends State
@@ -57,7 +68,6 @@ class PuzzleHomeState extends State
   Duration _lastElapsed;
   StreamSubscription _puzzleEventSubscription;
 
-  bool _autoPlay = false;
   _PuzzleControls _autoPlayListenable;
 
   PuzzleHomeState(this.puzzle) {
@@ -70,19 +80,6 @@ class PuzzleHomeState extends State
     _autoPlayListenable = _PuzzleControls(this);
     _ticker ??= createTicker(_onTick);
     _ensureTicking();
-  }
-
-  void _setAutoPlay(bool newValue) {
-    if (newValue != _autoPlay) {
-      setState(() {
-        // Only allow enabling autoPlay if the puzzle is not solved
-        _autoPlayListenable._notify();
-        _autoPlay = newValue && !puzzle.solved;
-        if (_autoPlay) {
-          _ensureTicking();
-        }
-      });
-    }
   }
 
   @override
@@ -121,9 +118,6 @@ class PuzzleHomeState extends State
 
   void _onPuzzleEvent(PuzzleEvent e) {
     _autoPlayListenable._notify();
-    if (e != PuzzleEvent.random) {
-      _setAutoPlay(false);
-    }
     _tickerTimeSinceLastEvent = Duration.zero;
     _ensureTicking();
     setState(() {
@@ -155,20 +149,6 @@ class PuzzleHomeState extends State
 
     if (!puzzle.stable) {
       animationNotifier.animate();
-    } else {
-      if (!_autoPlay) {
-        _ticker.stop();
-        _lastElapsed = null;
-      }
-    }
-
-    if (_autoPlay &&
-        _tickerTimeSinceLastEvent > const Duration(milliseconds: 200)) {
-      puzzle.playRandom();
-
-      if (puzzle.solved) {
-        _setAutoPlay(false);
-      }
     }
   }
 }

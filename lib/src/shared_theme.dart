@@ -6,6 +6,7 @@ import 'core/puzzle_proxy.dart';
 import 'flutter.dart';
 import 'puzzle_controls.dart';
 import 'widgets/material_interior_alt.dart';
+import 'api/solve.dart';
 
 final puzzleAnimationDuration = kThemeAnimationDuration * 3;
 
@@ -50,15 +51,15 @@ abstract class SharedTheme {
       AnimatedContainer(
         duration: puzzleAnimationDuration,
         padding: tilePadding(puzzle),
-        child: RaisedButton(
-          elevation: 4,
-          clipBehavior: Clip.hardEdge,
+        child: MaterialButton(
           animationDuration: puzzleAnimationDuration,
+          clipBehavior: Clip.hardEdge,
+          elevation: 4,
           onPressed: () => puzzle.clickOrShake(tileValue),
           shape: shape ?? puzzleBorder(small),
           padding: const EdgeInsets.symmetric(),
-          child: content,
           color: color,
+          child: content,
         ),
       );
 
@@ -81,11 +82,7 @@ abstract class SharedTheme {
           onPressed: controls.reset,
           icon: Icon(Icons.refresh, color: puzzleAccentColor),
         ),
-        Checkbox(
-          value: controls.autoPlay,
-          onChanged: controls.setAutoPlayFunction,
-          activeColor: puzzleAccentColor,
-        ),
+        OutlinedButton(onPressed: controls.solve, child: const Text('Solve')),
         Expanded(
           child: Container(),
         ),
