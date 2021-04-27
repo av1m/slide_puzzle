@@ -39,18 +39,10 @@ class _PuzzleControls extends ChangeNotifier implements PuzzleControls {
     print('Starting resolving...');
     final tiles = _parent.puzzle.puzzle.getList();
     final moves = await API.solve(tiles);
-    for (var move in moves) {
+
+    /*for (var move in moves) {
       _parent.puzzle.makeMove(move - 1);
       await Future.delayed(const Duration(milliseconds: 500), () {});
-    }
-
-    /*try {
-      data.then((value) => value.forEach((e) => {
-            _parent.puzzle.makeMove(e - 1),
-            await Future.delayed(const Duration(seconds: 2), (){}),
-          }));
-    } on Exception catch (e) {
-      print(e);
     }*/
   }
 }

@@ -180,7 +180,7 @@ abstract class Puzzle {
   }
 
   Puzzle clickValue(int tileValue) {
-    print('Can we move $tileValue →  ${_movable(tileValue)}');
+    print('Can we move ${tileValue + 1} → ${_movable(tileValue)}');
     if (!_movable(tileValue)) {
       return null;
     }
