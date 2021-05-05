@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:provider/provider.dart';
 
@@ -35,15 +34,25 @@ class _PuzzleControls extends ChangeNotifier implements PuzzleControls {
   void reset() => _parent.puzzle.reset();
 
   @override
-  void solve() async {
-    print('Starting resolving...');
+  void solve(BuildContext context, String algorithm, bool blankAtFirst) async {
+    print('Starting resolving with $algorithm...');
     final tiles = _parent.puzzle.puzzle.getList();
-    final moves = await API.solve(tiles);
-
-    /*for (var move in moves) {
-      _parent.puzzle.makeMove(move - 1);
-      await Future.delayed(const Duration(milliseconds: 500), () {});
-    }*/
+    try {
+      final moves = await API.solve(algorithm, tiles, blankAtFirst);
+      print(moves);
+      for (var move in moves) {
+        _parent.puzzle.makeMove(move - 1);
+        await Future.delayed(const Duration(milliseconds: 500), () {});
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to solve!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }
 
@@ -73,6 +82,8 @@ class PuzzleHomeState extends State
     _ticker ??= createTicker(_onTick);
     _ensureTicking();
   }
+
+  final snackBar = const SnackBar(content: Text('Yay! A SnackBar!'));
 
   @override
   Widget build(BuildContext context) => MultiProvider(
@@ -242,8 +253,9 @@ Widget _doBuildCore(bool small) => ValueTabController<SharedTheme>(
                           right: 10,
                         ),
                         child: Consumer<PuzzleControls>(
-                          builder: (_, controls, __) =>
-                              Row(children: theme.bottomControls(controls)),
+                          builder: (_, controls, __) => Row(
+                              children:
+                                  theme.bottomControls(context, controls)),
                         ),
                       )
                     ],

@@ -15,26 +15,29 @@ class API {
         .toList();
   }
 
-  static Future<List<int>> solve(var tiles) async {
-    print('im enter her');
+  static Future<List<int>> solve(
+      String algorithm, var tiles, bool blankAtFirst) async {
+    print('API.solve()');
     final body = {
       'tiles': API.parseTiles((tiles as List<List<String>>)),
-      'method': 'a_star'
+      'method': algorithm,
+      'blankAtFirst': blankAtFirst,
     };
+    print(body);
 
     // https://sliding-block-puzzles.herokuapp.com/
-    final url = Uri.parse('https://sliding-block-puzzles.herokuapp.com/');
+    final url = Uri.parse('http://127.0.0.1:8000/');
 
-    
-      final response = await http.post(url,
-          headers: {'Content-Type': 'application/json'},
-          body: convert.jsonEncode(body));
-      if (response.statusCode == 200) {
-        final data = convert.jsonDecode(response.body);
-        final solutions = (data['solutions'] as List);
-        return List<int>.from(solutions);
-      }
-    
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: convert.jsonEncode(body));
+    print(response);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final solutions = (data['solutions'] as List);
+      return List<int>.from(solutions);
+    }
+
     return List.empty();
   }
 }
@@ -45,6 +48,6 @@ void main() {
     ['4', '2', '0'],
     ['3', '1', '7']
   ];
-  final data = API.solve(tiles);
-  data.then((value) => print(value));
+  final data = API.solve('a_stsar', tiles, false);
+  data.then(print);
 }

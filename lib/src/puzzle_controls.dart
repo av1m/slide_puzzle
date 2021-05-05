@@ -4,6 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import 'flutter.dart';
+
 abstract class PuzzleControls implements Listenable {
   void reset();
 
@@ -11,5 +13,5 @@ abstract class PuzzleControls implements Listenable {
 
   int get incorrectTiles;
 
-  void solve();
+  void solve(BuildContext context, String algorithm, bool blankAtFirst);
 }
