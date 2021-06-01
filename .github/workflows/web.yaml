@@ -1,0 +1,32 @@
+name: Flutter deploy
+
+on: workflow_dispatch
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      # Setup Java environment in order to build the application
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '12.x'
+      
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable' # 'dev', 'alpha', default to: 'stable'
+          # flutter-version: '1.12.x' # you can also specify exact version of flutter
+      
+      # Get flutter dependencies.
+      - run: flutter pub get
+
+      - run: flutter build web
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: gh-pages
+          folder: build/web

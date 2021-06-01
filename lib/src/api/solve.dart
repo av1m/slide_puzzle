@@ -25,8 +25,8 @@ class API {
     };
     print(body);
 
-    // https://sliding-block-puzzles.herokuapp.com/
-    final url = Uri.parse('http://127.0.0.1:8000/');
+    // http://127.0.0.1:8000/solve
+    final url = Uri.parse('https://sliding-block-puzzles.herokuapp.com/solve');
 
     final response = await http.post(url,
         headers: {'Content-Type': 'application/json'},
